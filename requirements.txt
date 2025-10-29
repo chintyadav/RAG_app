@@ -1,0 +1,10 @@
+langchain
+ipykernel
+python-dotenv
+langchain-groq
+chromadb                # for Chroma
+langchain-community     # for WebBaseLoader
+openai
+sentence_transformers
+langchain_huggingface
+streamlit
