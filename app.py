@@ -11,7 +11,7 @@ from langchain_community.vectorstores import Chroma
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain.chains import create_history_aware_retriever
+from langchain.chains.history_aware_retriever import create_history_aware_retriever
 from langchain_core.messages import AIMessage, HumanMessage
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
@@ -239,4 +239,5 @@ if "retriever" in st.session_state:
 
 else:
     st.info("👆 Enter a URL and click 'Load & Process URL' to start.")
+
 
