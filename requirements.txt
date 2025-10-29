@@ -1,9 +1,10 @@
-streamlit
+streamlit>=1.25.0
 langchain>=0.2.11
-langchain-community>=0.2.10
 langchain-core>=0.2.10
+langchain-community>=0.2.10
 langchain-groq
 langchain-huggingface
 chromadb
 sentence-transformers
 python-dotenv
+tiktoken
