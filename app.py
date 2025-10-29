@@ -17,6 +17,60 @@ from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
 
+# diagnostic + compatibility import block (paste at top, before other langchain imports)
+import logging
+logging.basicConfig(level=logging.INFO)
+
+def _import_create_retrieval_chain():
+    try:
+        # preferred new path (langchain >= 0.2.x)
+        from langchain.chains.retrieval import create_retrieval_chain
+        logging.info("Imported create_retrieval_chain from langchain.chains.retrieval")
+        return create_retrieval_chain
+    except Exception as e1:
+        logging.warning("Could not import from langchain.chains.retrieval: %s", e1)
+        try:
+            # legacy path
+            from langchain.chains import create_retrieval_chain
+            logging.info("Imported create_retrieval_chain from langchain.chains (legacy)")
+            return create_retrieval_chain
+        except Exception as e2:
+            logging.exception("Both import attempts for create_retrieval_chain failed.")
+            raise
+
+# Use similarly for other moved imports if needed:
+def _import_history_aware_retriever():
+    try:
+        from langchain.chains.history_aware_retriever import create_history_aware_retriever
+        logging.info("Imported create_history_aware_retriever (new path)")
+        return create_history_aware_retriever
+    except Exception:
+        try:
+            from langchain.chains import create_history_aware_retriever
+            logging.info("Imported create_history_aware_retriever (legacy)")
+            return create_history_aware_retriever
+        except Exception:
+            logging.exception("Failed to import create_history_aware_retriever from either path.")
+            raise
+
+# now call them to get the functions
+create_retrieval_chain = _import_create_retrieval_chain()
+create_history_aware_retriever = _import_history_aware_retriever()
+
+
+try:
+    import langchain
+    logging.info("langchain.__version__ = %s", getattr(langchain, "__version__", "unknown"))
+except Exception:
+    logging.warning("langchain import failed for version check.")
+
+try:
+    import langchain_core
+    logging.info("langchain_core.__version__ = %s", getattr(langchain_core, "__version__", "unknown"))
+except Exception:
+    logging.info("langchain_core not installed or import failed.")
+
+
 # --- Apply Modern Aesthetic Dark Theme ---
 st.markdown(
     """
@@ -239,6 +293,7 @@ if "retriever" in st.session_state:
 
 else:
     st.info("👆 Enter a URL and click 'Load & Process URL' to start.")
+
 
 
 
