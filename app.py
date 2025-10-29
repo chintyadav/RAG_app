@@ -5,52 +5,86 @@ import streamlit as st
 import os
 from dotenv import load_dotenv
 
-# --- Compatibility + diagnostic import block (MUST be first for robustness) ---
-def _import_create_retrieval_chain():
+# --- Robust compatibility + diagnostics (replace your current import block) ---
+import logging
+logging.basicConfig(level=logging.INFO)
+import streamlit as st
+
+def _try_import_create_retrieval_chain():
+    # Try new path
     try:
         from langchain.chains.retrieval import create_retrieval_chain
         logging.info("Imported create_retrieval_chain from langchain.chains.retrieval")
         return create_retrieval_chain
-    except Exception as e1:
-        logging.warning("Could not import from langchain.chains.retrieval: %s", e1)
-        try:
-            from langchain.chains import create_retrieval_chain
-            logging.info("Imported create_retrieval_chain from langchain.chains (legacy)")
-            return create_retrieval_chain
-        except Exception as e2:
-            logging.exception("Both import attempts for create_retrieval_chain failed.")
-            raise
+    except Exception as e_new:
+        logging.warning("new-path import failed: %s", e_new)
+    # Try legacy path
+    try:
+        from langchain.chains import create_retrieval_chain
+        logging.info("Imported create_retrieval_chain from langchain.chains (legacy)")
+        return create_retrieval_chain
+    except Exception as e_legacy:
+        logging.warning("legacy-path import failed: %s", e_legacy)
 
-def _import_history_aware_retriever():
+    # If we reach here both attempts failed
+    logging.exception("Both create_retrieval_chain import attempts failed.")
+    return None
+
+def _try_import_history_aware_retriever():
     try:
         from langchain.chains.history_aware_retriever import create_history_aware_retriever
         logging.info("Imported create_history_aware_retriever (new path)")
         return create_history_aware_retriever
-    except Exception as e:
-        logging.warning("Could not import create_history_aware_retriever from new path: %s", e)
-        try:
-            from langchain.chains import create_history_aware_retriever
-            logging.info("Imported create_history_aware_retriever (legacy)")
-            return create_history_aware_retriever
-        except Exception as e2:
-            logging.exception("Failed to import create_history_aware_retriever from either path.")
-            raise
+    except Exception as e_new:
+        logging.warning("new-path import failed: %s", e_new)
+    try:
+        from langchain.chains import create_history_aware_retriever
+        logging.info("Imported create_history_aware_retriever (legacy)")
+        return create_history_aware_retriever
+    except Exception as e_legacy:
+        logging.warning("legacy-path import failed: %s", e_legacy)
 
-create_retrieval_chain = _import_create_retrieval_chain()
-create_history_aware_retriever = _import_history_aware_retriever()
+    logging.exception("Both create_history_aware_retriever import attempts failed.")
+    return None
 
-# Optional version diagnostics (will appear in deploy logs)
+create_retrieval_chain = _try_import_create_retrieval_chain()
+create_history_aware_retriever = _try_import_history_aware_retriever()
+
+# Diagnostic: print versions (these will appear in Streamlit logs)
 try:
     import langchain
     logging.info("langchain.__version__ = %s", getattr(langchain, "__version__", "unknown"))
 except Exception:
-    logging.warning("langchain import failed for version check.")
+    logging.warning("langchain import unavailable for version check.")
 
 try:
     import langchain_core
     logging.info("langchain_core.__version__ = %s", getattr(langchain_core, "__version__", "unknown"))
 except Exception:
-    logging.info("langchain_core not installed or import failed.")
+    logging.info("langchain_core not present or import failed.")
+
+# If imports failed, show user-friendly instructions in the app and stop
+if create_retrieval_chain is None or create_history_aware_retriever is None:
+    st.error(
+        """LangChain imports failed in deployed environment.
+        Please ensure your `requirements.txt` contains the correct packages and versions (see instructions below),
+        then Clear build cache and redeploy. Check deploy logs for pip install output."""
+    )
+    # give a short actionable hint in the app
+    st.info("Recommended requirements.txt (add to repo root) and redeploy.")
+    st.code("""
+streamlit>=1.25.0
+langchain>=0.2.11
+langchain-core>=0.2.10
+langchain-community>=0.2.10
+langchain-groq
+langchain-huggingface
+chromadb
+sentence-transformers
+python-dotenv
+tiktoken
+    """)
+    st.stop()
 
 
 # --- Now import the rest of your LangChain / app dependencies ---
@@ -182,3 +216,4 @@ if "retriever" in st.session_state:
 
 else:
     st.info("👆 Enter a URL and click 'Load & Process URL' to start.")
+
