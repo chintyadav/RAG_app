@@ -2,8 +2,6 @@ name: Sync to Hugging Face hub
 on:
   push:
     branches: [main]
-
-  # to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
@@ -14,7 +12,20 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
-      - name: Push to hub
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "you@example.com"
+          git config --global user.name "Harsh262002"
+
+      - name: Pull latest changes from Hugging Face (avoid conflicts)
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: git push https://Harsh262002:$HF_TOKEN@huggingface.co/spaces/Harsh262002/Rag_llm main
+        run: |
+          git pull https://Harsh262002:$HF_TOKEN@huggingface.co/spaces/Harsh262002/Rag_llm main --rebase || true
+
+      - name: Push to Hugging Face Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git push https://Harsh262002:$HF_TOKEN@huggingface.co/spaces/Harsh262002/Rag_llm main
