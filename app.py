@@ -2,12 +2,12 @@ import streamlit as st
 import os
 from dotenv import load_dotenv
 
-# LangChain imports
-from langchain_groq import ChatGroq
-from langchain_community.document_loaders import WebBaseLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain.vectorstores import Chroma
+# LangChain / integrations
+from langchain_groq import ChatGroq                                 # Groq integration
+from langchain_community.document_loaders import WebBaseLoader       # community loader
+from langchain_text_splitters import RecursiveCharacterTextSplitter  # text splitters package
+from langchain_huggingface import HuggingFaceEmbeddings              # huggingface embeddings integration
+from langchain_chroma.vectorstores import Chroma                     # <-- IMPORTANT: from langchain_chroma
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -239,3 +239,4 @@ if "retriever" in st.session_state:
 
 else:
     st.info("👆 Enter a URL and click 'Load & Process URL' to start.")
+
