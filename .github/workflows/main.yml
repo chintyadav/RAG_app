@@ -18,11 +18,18 @@ jobs:
           git config --global user.email "you@example.com"
           git config --global user.name "Harsh262002"
 
-      - name: Pull latest changes from Hugging Face (avoid conflicts)
+      - name: Add HF remote & fetch
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git pull https://Harsh262002:$HF_TOKEN@huggingface.co/spaces/Harsh262002/Rag_llm main --rebase || true
+          git remote remove hf || true
+          git remote add hf https://Harsh262002:$HF_TOKEN@huggingface.co/spaces/Harsh262002/Rag_llm
+          git fetch hf main
+
+      - name: Rebase onto HF main
+        run: |
+          # Try to rebase local commits on top of remote
+          git rebase hf/main || { echo "Rebase failed — aborting rebase and exiting (resolve conflicts manually)"; git rebase --abort; exit 1; }
 
       - name: Push to Hugging Face Space
         env:
