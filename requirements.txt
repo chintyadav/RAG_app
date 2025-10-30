@@ -1,10 +1,10 @@
-langchain
-ipykernel
+streamlit>=1.25.0
 python-dotenv
+langchain>=0.1
 langchain-groq
-chromadb                # for Chroma
-langchain-community     # for WebBaseLoader
-openai
-sentence_transformers
-langchain_huggingface
-streamlit
+langchain-huggingface
+langchain-chroma
+langchain-community
+langchain-text-splitters
+chromadb
+sentence-transformers
