@@ -1,6 +1,6 @@
 streamlit>=1.25.0
 python-dotenv
-langchain=0.3.27
+langchain
 langchain-groq
 langchain-huggingface
 langchain-chroma
@@ -8,4 +8,5 @@ langchain-community
 langchain-text-splitters
 chromadb
 sentence-transformers
+
 
