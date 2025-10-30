@@ -10,7 +10,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma.vectorstores import Chroma
 
 # Correct chain imports (fixed paths)
-from langchain.chains import create_retrieval_chain
+from langchain.chains.retrieval import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.history_aware_retriever import create_history_aware_retriever
 
@@ -242,6 +242,7 @@ if "retriever" in st.session_state:
 
 else:
     st.info("👆 Enter a URL and click 'Load & Process URL' to start.")
+
 
 
 
