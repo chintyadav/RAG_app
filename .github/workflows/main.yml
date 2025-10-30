@@ -1,4 +1,5 @@
 name: Sync to Hugging Face hub
+
 on:
   push:
     branches: [main]
@@ -7,29 +8,32 @@ on:
 jobs:
   sync-to-hub:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
           lfs: true
 
       - name: Configure Git
         run: |
-          git config --global user.email "you@example.com"
+          git config --global user.email "harsh.yadav262002@gmail.com"
           git config --global user.name "Harsh262002"
 
       - name: Add HF remote & fetch
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
+          # Remove existing 'hf' remote if present, then add with token for auth
           git remote remove hf || true
           git remote add hf https://Harsh262002:$HF_TOKEN@huggingface.co/spaces/Harsh262002/Rag_llm
           git fetch hf main
 
-      - name: Rebase onto HF main
+      - name: Merge hf/main preferring local changes (auto-resolve)
+        # This merge will automatically keep your GitHub repo's versions when conflicts occur.
         run: |
-          # Try to rebase local commits on top of remote
-          git rebase hf/main || { echo "Rebase failed — aborting rebase and exiting (resolve conflicts manually)"; git rebase --abort; exit 1; }
+          git merge --allow-unrelated-histories hf/main -X ours -m "Merge HF remote (prefer local)"
 
       - name: Push to Hugging Face Space
         env:
