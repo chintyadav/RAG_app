@@ -4,9 +4,6 @@ langchain>=0.3.27
 langchain-core>=0.3.79
 langchain-chroma
 langchain-community
-langchain-huggingface
-langchain-text-splitters
 langchain-groq
 chromadb
-sentence-transformers
-huggingface-hub
+huggingface-hub>=0.13.0
