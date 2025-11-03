@@ -2,14 +2,14 @@ import streamlit as st
 import os
 from dotenv import load_dotenv
 
-# LangChain / integrations (use integration packages in requirements.txt)
+# Integrations
 from langchain_groq import ChatGroq
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_huggingface import HuggingFaceEmbeddings
+# use chroma integration package import
 from langchain_chroma.vectorstores import Chroma
 
-# Correct chain imports (fixed paths)
+# Correct chain imports (submodule paths)
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.history_aware_retriever import create_history_aware_retriever
@@ -19,6 +19,7 @@ from langchain_core.messages import AIMessage, HumanMessage
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
+
 
 # --- Apply Modern Aesthetic Dark Theme ---
 st.markdown(
@@ -242,6 +243,7 @@ if "retriever" in st.session_state:
 
 else:
     st.info("👆 Enter a URL and click 'Load & Process URL' to start.")
+
 
 
 
